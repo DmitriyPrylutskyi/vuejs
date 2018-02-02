@@ -13,17 +13,27 @@
         <div class="sample">
             <input type="text" v-model="name">
             <hr>
-            <h2>Hello, {{ name }}</h2>
+            <h2 v-if='show'>Hello, {{ name }}</h2>
+            <template v-else>
+                <p>Name is hidden</p>                
+            </template>
+            <button class="btn btn-success" v-on:click='show = !show'>Togle name</button>
+            <button class="btn btn-primary" v-on:click='toggleShow'>Togle name 2</button>
         </div>
     </div>
     <script>
         let sample = new Vue({
             el: '.sample',
             data: {
-                name: ''
+                name: '',
+                show: true
+            },
+            methods: {
+                toggleShow() {
+                    this.show = !this.show
+                }
             }
         });
-
     </script>
 </body>
 </html>
