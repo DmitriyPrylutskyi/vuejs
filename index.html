@@ -11,26 +11,22 @@
 <body>
     <div class="wrapper">
         <div class="sample">
-            <input type="text" v-model="name">
+            <input type="text" v-model="firstName">
+            <input type="text" v-model="lastName">
             <hr>
-            <h2 v-if='show'>Hello, {{ name }}</h2>
-            <template v-else>
-                <p>Name is hidden</p>                
-            </template>
-            <button class="btn btn-success" v-on:click='show = !show'>Togle name</button>
-            <button class="btn btn-primary" v-on:click='toggleShow'>Togle name 2</button>
+            <h2>Hello, {{ fullName }}</h2>
         </div>
     </div>
     <script>
         let sample = new Vue({
             el: '.sample',
             data: {
-                name: '',
-                show: true
+                firstName: '',
+                lastName: '' 
             },
-            methods: {
-                toggleShow() {
-                    this.show = !this.show
+            computed: {
+                fullName(){
+                    return this.firstName + ' ' + this.lastName;
                 }
             }
         });
