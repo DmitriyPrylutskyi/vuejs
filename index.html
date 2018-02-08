@@ -16,19 +16,21 @@
             <input type="text" v-model="promo">
             <hr>
             <h2>Hello, {{ fullName }}</h2>
-            <p v-show="showText">Your discount {{ sale }} %</p>
+            <p v-show="showText">Your discount {{ discount }} %</p>
         </div>
     </div>
     <script>
-        function getSale(code){
+        function getSale(code, callback){
             let codes = {
                 newYear: 10,
                 sale: 20
             }
 
-            let sale = (codes[code] !== undefined) ? codes[code] : 0;
+            let discount = (codes[code] !== undefined) ? codes[code] : 0;
 
-            return sale;
+            setTimeout(() => {
+              callback(discount)
+            }, 1000)
         }
 
         let sample = new Vue({
@@ -37,24 +39,26 @@
                 firstName: '',
                 lastName: '',
                 promo: '',
-                showText: false
+                showText: false,
+                discount: 0
             },
             computed: {
                 fullName(){
                     return this.firstName + ' ' + this.lastName;
-                },
-
-                sale(){
-                    let discount = getSale(this.promo);
-
-                    if ( discount === 0 ) {
-                        this.showText = false
-                    } else {
-                        this.showText = true   
-                    }
-
-                    return discount;
                 }
+            },
+            watch: {
+               promo() {
+                    getSale(this.promo, (discount) => {
+                        this.discount = discount;
+
+                        if ( discount === 0 ) {
+                            this.showText = false
+                        } else {
+                            this.showText = true   
+                        }
+                    });
+               } 
             }
         });
     </script>
