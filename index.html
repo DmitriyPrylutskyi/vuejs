@@ -7,64 +7,67 @@
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link href="css/styles.css" rel="stylesheet">
     <script src="js/vue.js"></script>
-    <script src="https://unpkg.com/vue-w3c-valid/dist/simple.js"></script>
 </head>
 <body>
     <div class="wrapper">
         <div class="sample">
-            <input type="text" data-v-model="firstName">
-            <input type="text" data-v-model="lastName">
-            <input type="text" data-v-model="promo">
+            <button class="btn btn-success"
+                @click="addNumber"
+            >
+                Add
+            </button>
+            <button class="btn btn-primary" @click="sortNumbers">
+                Sort
+            </button>
+            <ul>
+                <li v-for="(number, index) in numbers"
+                    @mouseenter = "onMouseEnter($event, index)"
+                    @mouseleave = "onMouseLeave($event, index)"
+                >
+                    {{ index }} : {{ number }}
+                </li>
+            </ul>
             <hr>
-            <h2>Hello, {{ fullName }}</h2>
-            <p data-v-show="showText">Your discount {{ discount }} %</p>
+            <table class="table table-bordered">
+                <tr v-for="(value, key, index) in info">
+                    <td>{{ index }}</td>
+                    <td>{{ key }}</td>
+                    <td>{{ value }}</td>
+                </tr>
+            </table>
         </div>
     </div>
     <script>
-        function getSale(code, callback){
-            let codes = {
-                newYear: 10,
-                sale: 20
-            }
-
-            let discount = (codes[code] !== undefined) ? codes[code] : 0;
-
-            setTimeout(() => {
-              callback(discount)
-            }, 1000)
-        }
-
-        new VueW3CValid({
-            el: '.sample'
-        });
-
         let sample = new Vue({
             el: '.sample',
             data: {
-                firstName: '',
-                lastName: '',
-                promo: '',
-                showText: false,
-                discount: 0
-            },
-            computed: {
-                fullName(){
-                    return this.firstName + ' ' + this.lastName;
+                numbers: [],
+                info: {
+                    name: 'Dmitriy',
+                    email: 'dprily@gmail.com'
                 }
             },
-            watch: {
-               promo() {
-                    getSale(this.promo, (discount) => {
-                        this.discount = discount;
-
-                        if ( discount === 0 ) {
-                            this.showText = false
-                        } else {
-                            this.showText = true   
-                        }
+            methods: {
+                addNumber(){
+                    this.numbers.push(Math.floor(Math.random() * 10));
+                },
+                sortNumbers(){
+                    this.numbers.sort((a,b) => {
+                        return a > b ? 1 : -1;
                     });
-               } 
+                },
+                onMouseEnter(e, index){
+                    if (index & 1) {
+                        e.target.style.color = 'red'
+                    }
+                },
+                onMouseLeave(e, index){
+                    if (index & 1) {
+                        e.target.style.color = 'black'
+                    }
+                },
             }
+
         });
     </script>
 </body>
