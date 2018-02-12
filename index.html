@@ -8,26 +8,77 @@
   <link rel="stylesheet" href="css/bootstrap.min.css">
   <link href="css/styles.css" rel="stylesheet">
   <script src="js/vue.js"></script>
+  <style>
+  .my-info {
+    color: black;
+  }
+
+  .my-warning {
+    color: red;
+  }
+
+  .table-some {
+    color: #fff;
+    background-color: #000;
+  }
+  </style>
 </head>
 
 <body>
   <div class="wrapper">
     <div class="sample">
-      <div class="form-group">
-        <label>Phone</label>
-        <input type="text" class="form-control" v-model.lazy.trim="phone" @keyup.enter="show = true">
+      <div class="alert" :class="divClassName">
+        Some text
       </div>
-      <div v-show="show">
-        {{ phone }}
+      <div class="form-check">
+        <label class="form-check-label">
+          <input type="radio" class="form-check-input" value="info" v-model="divClass"> Info
+        </label>
+        <label class="form-check-label">
+          <input type="radio" class="form-check-input" value="warning" v-model="divClass"> Warning
+        </label>
       </div>
+      <hr>
+      <div class="form-check">
+        <label class="form-check-label" v-for="(value, name) in flags">
+          <input type="checkbox" class="form-check-input" v-model="flags[name]"> {{ name }}
+        </label>
+      </div>
+      <hr>
+      <table class="table" :class="flags">
+        <tr>
+          <td>Title</td>
+          <td>Some</td>
+          <td>Etc</td>
+        </tr>
+        <tr>
+          <td>Title</td>
+          <td>Some</td>
+          <td>Etc</td>
+        </tr>
+        <tr>
+          <td>Title</td>
+          <td>Some</td>
+          <td>Etc</td>
+        </tr>
+      </table>
     </div>
   </div>
   <script>
   new Vue({
     el: '.sample',
     data: {
-      phone: '',
-      show: false
+      divClass: 'info',
+      flags: {
+        'table-bordered': false,
+        'table-hover': false,
+        'table-some': false
+      }
+    },
+    computed: {
+      divClassName() {
+        return ['alert-' + this.divClass, 'my-' + this.divClass];
+      }
     }
   });
   </script>
