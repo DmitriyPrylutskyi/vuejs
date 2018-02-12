@@ -68,13 +68,13 @@
       email: '',
       firstName: '',
       lastName: '',
+      name: '',
       phone: '',
       guests: [],
       showResult: false,
       info: {
         Email: '',
-        FirstName: '',
-        LastName: '',
+        Name: '',
         Phone: '',
         Guests: [],
       }
@@ -88,8 +88,7 @@
       },
       onSubmit() {
         this.info.Email = this.email;
-        this.info.FirstName = this.firstName;
-        this.info.LastName = this.lastName;
+        this.info.Name = this.firstName + ' ' + this.lastName;
         this.info.Phone = this.phone;
         this.info.Guests = this.info.Guests.concat(this.guests);
         this.showResult = true;
