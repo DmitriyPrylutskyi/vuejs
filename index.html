@@ -9,17 +9,12 @@
   <link href="css/styles.css" rel="stylesheet">
   <script src="js/vue.js"></script>
   <style>
-  .my-info {
-    color: black;
-  }
-
-  .my-warning {
-    color: red;
-  }
-
-  .table-some {
-    color: #fff;
-    background-color: #000;
+  .alert {
+    -webkit-transition: min-height .5s;
+    -moz-transition: min-height .5s;
+    -ms-transition: min-height .5s;
+    -o-transition: min-height .5s;
+    transition: min-height .5s;
   }
   </style>
 </head>
@@ -27,57 +22,38 @@
 <body>
   <div class="wrapper">
     <div class="sample">
-      <div class="alert" :class="divClassName">
+      <div class="alert" :style="[properties, minHeight]">
         Some text
       </div>
-      <div class="form-check">
-        <label class="form-check-label">
-          <input type="radio" class="form-check-input" value="info" v-model="divClass"> Info
-        </label>
-        <label class="form-check-label">
-          <input type="radio" class="form-check-input" value="warning" v-model="divClass"> Warning
-        </label>
-      </div>
       <hr>
-      <div class="form-check">
-        <label class="form-check-label" v-for="(value, name) in flags">
-          <input type="checkbox" class="form-check-input" v-model="flags[name]"> {{ name }}
-        </label>
-      </div>
-      <hr>
-      <table class="table" :class="flags">
-        <tr>
-          <td>Title</td>
-          <td>Some</td>
-          <td>Etc</td>
-        </tr>
-        <tr>
-          <td>Title</td>
-          <td>Some</td>
-          <td>Etc</td>
-        </tr>
-        <tr>
-          <td>Title</td>
-          <td>Some</td>
-          <td>Etc</td>
+      <table class="table table-bordered">
+        <tr v-for="(value, name) in properties">
+          <td>{{ name }}</td>
+          <td>
+            <input type="text" v-model="properties[name]">
+          </td>
         </tr>
       </table>
+      <hr>
+      <button class="btn btn-primary" @click="height += 50">+ height</button>
+      {{ minHeight }}
     </div>
   </div>
   <script>
   new Vue({
     el: '.sample',
     data: {
-      divClass: 'info',
-      flags: {
-        'table-bordered': false,
-        'table-hover': false,
-        'table-some': false
-      }
+      properties: {
+        color: '#ff0',
+        backgroundColor: '#050'
+      },
+      height: 50
     },
     computed: {
-      divClassName() {
-        return ['alert-' + this.divClass, 'my-' + this.divClass];
+      minHeight() {
+        return {
+          minHeight: this.height + 'px'
+        };
       }
     }
   });
