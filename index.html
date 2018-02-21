@@ -9,10 +9,7 @@
   <link rel="stylesheet" href="css/font-awesome.min.css">
   <link href="css/styles.css" rel="stylesheet">
   <style>
-  .content {
-    height: 100px;
-    overflow: auto;
-  }
+
   </style>
   <script src="js/vue.js"></script>
 </head>
@@ -20,110 +17,57 @@
 <body>
   <div class="wrapper">
     <div class="sample">
-      <form v-if="!formSubmited" @submit.prevent="formSubmited = true">
-        <div class="content alert alert-info" v-ondelay:scroll.100="scrollHandler">
-          <p>This text no one reads. This text no one reads. This text no one reads.</p>
-          <p>This text no one reads. This text no one reads. This text no one reads.</p>
-          <p>This text no one reads. This text no one reads. This text no one reads.</p>
-          <p>This text no one reads. This text no one reads. This text no one reads.</p>
-          <p>This text no one reads. This text no one reads. This text no one reads.</p>
-          <p>This text no one reads. This text no one reads. This text no one reads.</p>
-          <p>This text no one reads. This text no one reads. This text no one reads.</p>
-          <p>This text no one reads. This text no one reads. This text no one reads.</p>
-          <p>This text no one reads. This text no one reads. This text no one reads.</p>
-          <p>This text no one reads. This text no one reads. This text no one reads.</p>
-        </div>
-        <template v-if="endScroll">
-          <div class="form-check">
-            <label class="form-check-label">
-              <input class="form-check-input" type="checkbox" v-model="agree"> I agree this text
-            </label>
-          </div>
-          <div v-show="agree" class="form-check">
-            <label class="form-check-label">
-              <input class="form-check-input" type="checkbox" v-model="spam"> Send me spam
-            </label>
-          </div>
-          <template v-if="spam">
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="radio" value="email" v-model="wherespam"> Send me spam on email
-              </label>
-            </div>
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="radio" value="phone" v-model="wherespam"> Send me spam on phone
-              </label>
-            </div>
-          </template>
-        </template>
-        <hr>
-        <button v-show="agree" type="submit" class="btn btn-primary">
-          Send Data
-        </button>
-      </form>
-      <div v-else>
-        <table class="table table-bordered">
-          <tr>
-            <td>Agree Text</td>
-            <td>{{agree ? 'Yes' : 'No'}}</td>
-          </tr>
-          <tr>
-            <td>Get Spam</td>
-            <td>{{spam ? 'Yes' : 'No'}}</td>
-          </tr>
-          <tr>
-            <td>Spam on</td>
-            <td>{{wherespam.charAt(0).toUpperCase() + wherespam.slice(1)}}</td>
-          </tr>
-        </table>
-      </div>
+      <app-comp v-for="(elem, index) in values" :key="index" :min="elem.min" :max="elem.max" @reduce="reduce(index)">
+      </app-comp>
     </div>
   </div>
   <script>
-  Vue.directive('ondelay', {
-    bind(el, options) {
-      let timer;
-      let timeout = 0;
+  Vue.component('app-comp', {
+    props: ['min', 'max'],
+    template: `
+      <div>
+        <h2>{{ number }}</h2>
+        <button class="btn btn-primary" @click="onClick">+</button>
+        <hr>
+      </div>
+    `,
+    data() {
+      return {
 
-      for (let name in options.modifiers) {
-        if (!isNaN(+name)) {
-          timeout = parseInt(name);
-        }
       }
-
-      let callback = (e) => {
-        if (timer !== undefined) {
-          clearTimeout(timer);
-        }
-
-        if (options.modifiers.prevent) {
-          e.preventDefault();
-        }
-
-        timer = setTimeout(() => {
-          options.value.call(this, e);
-        }, timeout);
-      };
-
-      el.addEventListener(options.arg, callback);
+    },
+    computed: {
+      number() {
+        return Math.floor(Math.random() * (this.max - this.min) + this.min);
+      }
+    },
+    methods: {
+      onClick(e) {
+        this.$emit('reduce');
+      }
     }
   });
 
   new Vue({
     el: '.sample',
     data: {
-      endScroll: false,
-      agree: false,
-      spam: false,
-      wherespam: 'email',
-      formSubmited: false
+      values: [{
+          min: 10,
+          max: 30
+        },
+        {
+          min: 5,
+          max: 10
+        }, {
+          min: 100,
+          max: 300
+        }
+      ]
     },
     methods: {
-      scrollHandler(e) {
-        console.log('scroll');
-        let el = e.srcElement;
-        if (el.scrollTop + el.offsetHeight > el.scrollHeight) this.endScroll = true;
+      reduce(index) {
+        this.values[index].min += 5;
+        this.values[index].max += 5;
       }
     }
   });
