@@ -9,7 +9,10 @@
   <link rel="stylesheet" href="css/font-awesome.min.css">
   <link href="css/styles.css" rel="stylesheet">
   <style>
-
+  .content {
+    height: 100px;
+    overflow: auto;
+  }
   </style>
   <script src="js/vue.js"></script>
 </head>
@@ -17,13 +20,64 @@
 <body>
   <div class="wrapper">
     <div class="sample">
-      <form>
-        <h2>{{ clicks }}</h2>
+      <form v-if="!formSubmited" @submit.prevent="formSubmited = true">
+        <div class="content alert alert-info" v-ondelay:scroll.100="scrollHandler">
+          <p>This text no one reads. This text no one reads. This text no one reads.</p>
+          <p>This text no one reads. This text no one reads. This text no one reads.</p>
+          <p>This text no one reads. This text no one reads. This text no one reads.</p>
+          <p>This text no one reads. This text no one reads. This text no one reads.</p>
+          <p>This text no one reads. This text no one reads. This text no one reads.</p>
+          <p>This text no one reads. This text no one reads. This text no one reads.</p>
+          <p>This text no one reads. This text no one reads. This text no one reads.</p>
+          <p>This text no one reads. This text no one reads. This text no one reads.</p>
+          <p>This text no one reads. This text no one reads. This text no one reads.</p>
+          <p>This text no one reads. This text no one reads. This text no one reads.</p>
+        </div>
+        <template v-if="endScroll">
+          <div class="form-check">
+            <label class="form-check-label">
+              <input class="form-check-input" type="checkbox" v-model="agree"> I agree this text
+            </label>
+          </div>
+          <div v-show="agree" class="form-check">
+            <label class="form-check-label">
+              <input class="form-check-input" type="checkbox" v-model="spam"> Send me spam
+            </label>
+          </div>
+          <template v-if="spam">
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="radio" value="email" v-model="wherespam"> Send me spam on email
+              </label>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="radio" value="phone" v-model="wherespam"> Send me spam on phone
+              </label>
+            </div>
+          </template>
+        </template>
         <hr>
-        <button class="btn btn-success" v-ondelay:click.prevent.1000="onClick">
-          Click
+        <button v-show="agree" type="submit" class="btn btn-primary">
+          Send Data
         </button>
       </form>
+      <div v-else>
+        <table class="table table-bordered">
+          <tr>
+            <td>Agree Text</td>
+            <td>{{agree ? 'Yes' : 'No'}}</td>
+          </tr>
+          <tr>
+            <td>Get Spam</td>
+            <td>{{spam ? 'Yes' : 'No'}}</td>
+          </tr>
+          <tr>
+            <td>Spam on</td>
+            <td>{{wherespam.charAt(0).toUpperCase() + wherespam.slice(1)}}</td>
+          </tr>
+        </table>
+      </div>
     </div>
   </div>
   <script>
@@ -49,8 +103,7 @@
 
         timer = setTimeout(() => {
           options.value.call(this, e);
-        }, timeout)
-
+        }, timeout);
       };
 
       el.addEventListener(options.arg, callback);
@@ -60,11 +113,17 @@
   new Vue({
     el: '.sample',
     data: {
-      clicks: 0
+      endScroll: false,
+      agree: false,
+      spam: false,
+      wherespam: 'email',
+      formSubmited: false
     },
     methods: {
-      onClick() {
-        this.clicks++;
+      scrollHandler(e) {
+        console.log('scroll');
+        let el = e.srcElement;
+        if (el.scrollTop + el.offsetHeight > el.scrollHeight) this.endScroll = true;
       }
     }
   });
