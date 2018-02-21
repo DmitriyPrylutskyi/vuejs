@@ -10,77 +10,115 @@
   <link href="css/styles.css" rel="stylesheet">
   <script src="js/vue.js"></script>
 </head>
+<style>
+.novalid {
+  color: red;
+}
+
+.valid {
+  color: green;
+}
+</style>
 
 <body>
   <div class="wrapper">
     <div class="sample">
-      <form>
-        <div class="progress">
-          <div class="progress-bar"></div>
-        </div>
-        <div>
-          <div class="form-group">
-            <label>Name</label>
-            <input type="text" class="form-control" v-model="info.name">
+      <div v-if="!formSubmited">
+        <form @submit.prevent="submited()">
+          <div class="progress">
+            <div class="progress-bar" :style="[width]"></div>
           </div>
-          <div class="form-group">
-            <label>Phone</label>
-            <input type="text" class="form-control" v-model="info.phone">
+          <div class=" form-group " v-for="(item, index) in info ">
+            <label>{{ item.name }}</label> <i v-show="!item.value==''" :class="item.itemClass" aria-hidden="true "></i>
+            <input type="text " class="form-control " v-model="item.value" @input="onInput(index)">
           </div>
-          <div class="form-group">
-            <label>Email</label>
-            <input type="text" class="form-control" v-model="info.email">
-          </div>
-          <div class="form-group">
-            <label>name</label>
-            <input type="text" class="form-control" v-model="info.name">
-          </div>
-          <button class="btn btn-primary">
+          <button class="btn btn-primary" :class="[activate]">
             Send Data
           </button>
-      </form>
-      <table class="table table-bordered">
-        <tr>
-          <td>{{ info.name }}</td>
-          <td>{{ info.phone }}</td>
-          <td>{{ info.email }}</td>
-        </tr>
-      </table>
+        </form>
+      </div>
+      <div v-else>
+        <table class="table table-bordered ">
+          <tr v-for="(item, index) in info ">
+            <td>{{ item.name }}</td>
+            <td>{{ item.value }}</td>
+          </tr>
+        </table>
       </div>
     </div>
-    <script>
-    new Vue({
-      el: '.sample',
-      data: {
-        info: [{
-            name: 'Name',
-            value: '',
-            pattern: /^[a-zA-Z ]{2,30}$/
-          },
-          {
-            name: 'Phone',
-            value: '',
-            pattern: /^[0-9]{7,14}$/
-          },
-          {
-            name: 'Email',
-            value: '',
-            pattern: /.+/
-          },
-          {
-            name: 'Some Field 1',
-            value: '',
-            pattern: /.+/
-          },
-          {
-            name: 'Some Field 2',
-            value: '',
-            pattern: /.+/
-          }
-        ]
+  </div>
+  <script>
+  new Vue({
+    el: '.sample',
+    data: {
+      info: [{
+          name: 'Name',
+          value: '',
+          pattern: /^[a-zA-Z ]{2,30}$/
+        },
+        {
+          name: 'Phone',
+          value: '',
+          pattern: /^[0-9]{7,14}$/
+        },
+        {
+          name: 'Email',
+          value: '',
+          pattern: /^([a-z0-9_\.-]+)@([a-z0-9_\.-]+)\.([a-z\.]{2,6})$/
+        },
+        {
+          name: 'Some Field 1',
+          value: '',
+          pattern: /.+/
+        },
+        {
+          name: 'Some Field 2',
+          value: '',
+          pattern: /.+/
+        }
+      ],
+      complete: 0,
+      formValid: false,
+      formSubmited: false
+    },
+    beforeMount() {
+      for (var i = 0; i < this.info.length; i++) {
+        this.info[i]['itemClass'] = '';
       }
-    });
-    </script>
+    },
+    methods: {
+      onInput(i) {
+        this.complete = 0;
+        if (this.info[i].pattern.test(this.info[i].value)) {
+          this.info[i].itemClass = ['fa fa-check-circle', 'valid'];
+        } else {
+          this.info[i].itemClass = ['fa fa-info-circle', 'novalid'];
+        }
+        for (var i = 0; i < this.info.length; i++) {
+          if (this.info[i].itemClass.indexOf("valid") > 0) {
+            this.complete += 20;
+          }
+        }
+        if (this.complete == 100) this.formValid = true;
+      },
+      submited() {
+        this.formSubmited = true;
+      }
+    },
+    computed: {
+      width() {
+        return {
+          width: this.complete + '%'
+        };
+      },
+      activate() {
+        let disabled;
+        !this.formValid ? disabled = ['disabled'] : disabled = [''];
+        return disabled;
+      }
+    }
+  });
+  </script>
 </body>
 
 </html>
