@@ -5,69 +5,62 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>1</title>
-  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css//bootstrap.min.css">
   <link rel="stylesheet" href="css/font-awesome.min.css">
   <link href="css/styles.css" rel="stylesheet">
-  <style>
-
-  </style>
   <script src="js/vue.js"></script>
 </head>
 
 <body>
   <div class="wrapper">
     <div class="sample">
-      <app-comp v-for="(elem, index) in values" :key="index" :min="elem.min" :max="elem.max" @reduce="reduce(index)">
-      </app-comp>
+      <div v-timer:1000.5="onTimer">1</div>
+      <div v-timer:1000.5.run="onTimer">2</div>
+      <div v-timer:1000="onTimer">3</div>
     </div>
   </div>
   <script>
-  Vue.component('app-comp', {
-    props: ['min', 'max'],
-    template: `
-      <div>
-        <h2>{{ number }}</h2>
-        <button class="btn btn-primary" @click="onClick">+</button>
-        <hr>
-      </div>
-    `,
-    data() {
-      return {
+  Vue.directive('timer', {
+    bind(el, options) {
+      let timer;
+      let interval, value = 0;
 
+      interval = options.arg;
+
+      for (let name in options.modifiers) {
+        if (!isNaN(+name)) {
+          value = parseInt(name);
+        }
+      };
+
+      if (options.modifiers.run) {
+        interval = interval / value;
+        value = value / value;
       }
-    },
-    computed: {
-      number() {
-        return Math.floor(Math.random() * (this.max - this.min) + this.min);
+
+      let changeSize = () => {
+        timer = setInterval(() => {
+          options.value.call(this, el);
+        }, interval);
+
+        if (value != 0) {
+          setTimeout(() => {
+            clearInterval(timer);
+          }, value * 1000);
+        }
       }
-    },
-    methods: {
-      onClick(e) {
-        this.$emit('reduce');
-      }
+
+      changeSize();
+
     }
   });
 
   new Vue({
     el: '.sample',
-    data: {
-      values: [{
-          min: 10,
-          max: 30
-        },
-        {
-          min: 5,
-          max: 10
-        }, {
-          min: 100,
-          max: 300
-        }
-      ]
-    },
     methods: {
-      reduce(index) {
-        this.values[index].min += 5;
-        this.values[index].max += 5;
+      onTimer(el) {
+        let fontSize = getComputedStyle(el)['fontSize'];
+        el.style.fontSize = parseInt(fontSize) + 5 + 'px';
       }
     }
   });
