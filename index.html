@@ -5,62 +5,138 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>1</title>
-  <link rel="stylesheet" href="css//bootstrap.min.css">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
   <link rel="stylesheet" href="css/font-awesome.min.css">
   <link href="css/styles.css" rel="stylesheet">
   <script src="js/vue.js"></script>
 </head>
+<style>
+.novalid {
+  color: red;
+}
+
+.valid {
+  color: green;
+}
+</style>
 
 <body>
   <div class="wrapper">
     <div class="sample">
-      <div v-timer:1000.5="onTimer">1</div>
-      <div v-timer:1000.5.run="onTimer">2</div>
-      <div v-timer:1000="onTimer">3</div>
+      <div v-if="!formSubmited">
+        <form @submit.prevent="submited()">
+          <div class="progress">
+            <div class="progress-bar" :style="[width]"></div>
+          </div>
+          <app-input v-for="(item, index) in info" :key="index" :name="item.name" :value="item.value" :pattern="item.pattern" :itemclass="item.itemClass" @changeInput="changeinput(index, $event)">
+          </app-input>
+          <button class="btn btn-primary" :class="[activate]">
+            Send Data
+          </button>
+        </form>
+      </div>
+      <div v-else>
+        <table class="table table-bordered ">
+          <tr v-for="(item, index) in info ">
+            <td>{{ item.name }}</td>
+            <td>{{ item.value }}</td>
+          </tr>
+        </table>
+      </div>
     </div>
   </div>
   <script>
-  Vue.directive('timer', {
-    bind(el, options) {
-      let timer;
-      let interval, value = 0;
+  Vue.component('app-input', {
+    props: ['name', 'value', 'pattern', 'itemclass'],
+    template: `
+        <div class="form-group ">
+            <label>{{ name }}</label> <i v-show="!value==''" :class="itemclass" aria-hidden="true "></i>
+            <input type="text " class="form-control " :value="value" @input="onInput">
+          </div>
+      `,
+    data() {
+      return {
 
-      interval = options.arg;
-
-      for (let name in options.modifiers) {
-        if (!isNaN(+name)) {
-          value = parseInt(name);
-        }
-      };
-
-      if (options.modifiers.run) {
-        interval = interval / value;
-        value = value / value;
       }
+    },
+    computed: {
 
-      let changeSize = () => {
-        timer = setInterval(() => {
-          options.value.call(this, el);
-        }, interval);
-
-        if (value != 0) {
-          setTimeout(() => {
-            clearInterval(timer);
-          }, value * 1000);
-        }
+    },
+    methods: {
+      onInput(e) {
+        this.$emit('changeinput', e.target.value);
       }
-
-      changeSize();
-
     }
   });
 
   new Vue({
     el: '.sample',
+    data: {
+      info: [{
+          name: 'Name',
+          value: '',
+          pattern: /^[a-zA-Z ]{2,30}$/
+        },
+        {
+          name: 'Phone',
+          value: '',
+          pattern: /^[0-9]{7,14}$/
+        },
+        {
+          name: 'Email',
+          value: '',
+          pattern: /^([a-z0-9_\.-]+)@([a-z0-9_\.-]+)\.([a-z\.]{2,6})$/
+        },
+        {
+          name: 'Some Field 1',
+          value: '',
+          pattern: /.+/
+        },
+        {
+          name: 'Some Field 2',
+          value: '',
+          pattern: /.+/
+        }
+      ],
+      complete: 0,
+      formValid: false,
+      formSubmited: false
+    },
+    beforeMount() {
+      for (var i = 0; i < this.info.length; i++) {
+        this.info[i]['itemClass'] = '';
+      }
+    },
     methods: {
-      onTimer(el) {
-        let fontSize = getComputedStyle(el)['fontSize'];
-        el.style.fontSize = parseInt(fontSize) + 5 + 'px';
+      changeinput(i, value) {
+        this.complete = 0;
+        this.info[i].value = value;
+        if (this.info[i].pattern.test(this.info[i].value)) {
+          this.info[i].itemClass = ['fa fa-check-circle', 'valid'];
+        } else {
+          this.info[i].itemClass = ['fa fa-info-circle', 'novalid'];
+        }
+        for (var i = 0; i < this.info.length; i++) {
+          if (this.info[i].itemClass.indexOf("valid") > 0) {
+            this.complete += 20;
+          }
+        }
+        if (this.complete == 100) this.formValid = true;
+      },
+      submited() {
+        this.formSubmited = true;
+      }
+    },
+    computed: {
+      width() {
+        return {
+          width: this.complete + '%'
+        };
+      },
+      activate() {
+        let disabled;
+        !this.formValid ? disabled = ['disabled'] : disabled = [''];
+        return disabled;
       }
     }
   });
