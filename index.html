@@ -28,7 +28,7 @@
           <div class="progress">
             <div class="progress-bar" :style="[width]"></div>
           </div>
-          <app-input v-for="(item, index) in info" :key="index" :name="item.name" :value="item.value" :pattern="item.pattern" :itemclass="item.itemClass" @changeInput="changeinput(index, $event)">
+          <app-input v-for="(item, index) in info" :key="index" :name="item.name" :value="item.value" :pattern="item.pattern" @changeInput="changeinput(index, $event)">
           </app-input>
           <button class="btn btn-primary" :class="[activate]">
             Send Data
@@ -47,10 +47,10 @@
   </div>
   <script>
   Vue.component('app-input', {
-    props: ['name', 'value', 'pattern', 'itemclass'],
+    props: ['name', 'value', 'pattern'],
     template: `
         <div class="form-group ">
-            <label>{{ name }}</label> <i v-show="!value==''" :class="itemclass" aria-hidden="true "></i>
+            <label>{{ name }}</label> <i v-show="!value==''" :class="validClass" aria-hidden="true "></i>
             <input type="text " class="form-control " :value="value" @input="onInput">
           </div>
       `,
@@ -60,11 +60,16 @@
       }
     },
     computed: {
-
+      validClass() {
+        return (this.pattern.test(this.value)) ? ['fa fa-check-circle', 'valid'] : ['fa fa-info-circle', 'novalid'];
+      }
     },
     methods: {
       onInput(e) {
-        this.$emit('changeinput', e.target.value);
+        this.$emit('changeinput', {
+          value: e.target.value,
+          valid: this.pattern.test(e.target.value)
+        });
       }
     }
   });
@@ -104,20 +109,16 @@
     },
     beforeMount() {
       for (var i = 0; i < this.info.length; i++) {
-        this.info[i]['itemClass'] = '';
+        this.info[i]['valid'] = false;
       }
     },
     methods: {
-      changeinput(i, value) {
+      changeinput(i, data) {
         this.complete = 0;
-        this.info[i].value = value;
-        if (this.info[i].pattern.test(this.info[i].value)) {
-          this.info[i].itemClass = ['fa fa-check-circle', 'valid'];
-        } else {
-          this.info[i].itemClass = ['fa fa-info-circle', 'novalid'];
-        }
+        this.info[i].value = data.value;
+        this.info[i].valid = data.valid;
         for (var i = 0; i < this.info.length; i++) {
-          if (this.info[i].itemClass.indexOf("valid") > 0) {
+          if (this.info[i].valid) {
             this.complete += 20;
           }
         }
