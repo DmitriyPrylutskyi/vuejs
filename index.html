@@ -19,7 +19,9 @@
     <hr>
     <app-ul :items="list" v-if="ul"></app-ul>
     <app-ol :items="list" v-else></app-ol>
-    <component :is="listType" :items="list"></component>
+    <keep-alive>
+      <component :is="listType" :items="list"></component>
+    </keep-alive>
   </div>
   <script src="js/vue.js"></script>
   <script>
@@ -36,6 +38,9 @@
 		`,
     created() {
       console.log('ul created');
+    },
+    activated() {
+      console.log('ul activated');
     }
   });
 
@@ -52,6 +57,9 @@
 		`,
     created() {
       console.log('ol created');
+    },
+    activated() {
+      console.log('ol activated');
     }
   });
 
