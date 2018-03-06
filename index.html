@@ -16,41 +16,38 @@
     <div class="sample">
       <button class="btn btn-primary" @click="show = !show">Toggle</button>
       <div class="alert alert-warning" v-show="show">
-        Some text
-      </div>
-    </div>
-    <div class="sample2">
-      <button class="btn btn-primary" @click="show = !show">Toggle</button>
-      <div class="alert alert-warning" v-show="show">
-        Some text
+        {{ text }}
+        <hr> {{ text | length }}
+        <hr> {{ text | reverse | upper }}
+        <hr> {{ textLength }}
       </div>
     </div>
   </div>
   <script>
-  let mixinUpdatesLoger = {
-    data: {
-      updates: 0
-    },
-    updated() {
-      this.updates++
-        console.log(this.updates);
-    }
-  };
-
   new Vue({
     el: '.sample',
     data: {
       show: true,
+      text: 'Some text'
     },
-    mixins: [mixinUpdatesLoger]
-  });
-
-  new Vue({
-    el: '.sample2',
-    data: {
-      show: true
+    computed: {
+      textLength() {
+        console.log(2);
+        return this.text.length;
+      }
     },
-    mixins: [mixinUpdatesLoger]
+    filters: {
+      length(some) {
+        console.log(1);
+        return some.length;
+      },
+      reverse(str) {
+        return str.split('').reverse().join('');
+      },
+      upper(str) {
+        return str.toUpperCase();
+      }
+    }
   });
   </script>
 </body>
