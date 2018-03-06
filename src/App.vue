@@ -3,23 +3,19 @@
     <div class="sample">
       <div v-if="step != 2">
         <form @submit.prevent="nextQuestion()">
-          <template v-for="(item, index) in info">
-            <template v-if="index == step">
-              <h2>{{ item.title }}</h2>
-              <app-input-radio v-if="item.type == 'radio'" :key="index" :answers="item.answers" @changeradio="changeradio($event)">
-              </app-input-radio>
-              <app-input-checkbox v-if="item.type == 'checkbox'" :key="index" :answers="item.answers" @changecheck="changecheck($event)">
-              </app-input-checkbox>
-              <button class="btn btn-primary" :class="[activate]">
-                Далее
-              </button>
-            </template>
-          </template>
+          <h2>{{ info[step].title }}</h2>
+          <app-input-radio v-if="info[step].type == 'radio'" :answers="info[step].answers" @changeradio="changeradio($event)">
+          </app-input-radio>
+          <app-input-checkbox v-if="info[step].type == 'checkbox'" :answers="info[step].answers" @changecheck="changecheck($event)">
+          </app-input-checkbox>
+          <button class="btn btn-primary" :class="[activate]">
+            Далее
+          </button>
         </form>
       </div>
       <div v-else>
         <table class="table table-bordered ">
-          <tr v-for="(item) in info ">
+          <tr v-for="item in info ">
             <td>{{ item.title }}</td>
             <td>{{ item.answer }}</td>
           </tr>
