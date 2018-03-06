@@ -1,23 +1,27 @@
 <template>
   <div class="wrapper">
     <div class="sample">
-      <div v-if="!formSubmited">
-        <form @submit.prevent="submited()">
-          <div class="progress">
-            <div class="progress-bar" :style="[width]"></div>
-          </div>
-          <app-input v-for="(item, index) in info" :key="index" :name="item.name" :value="item.value" :pattern="item.pattern" @changeinput="changeinput(index, $event)">
-          </app-input>
-          <button class="btn btn-primary" :class="[activate]">
-            Send Data
-          </button>
+      <div v-if="step != 2">
+        <form @submit.prevent="nextQuestion()">
+          <template v-for="(item, index) in info">
+            <template v-if="index == step">
+              <h2>{{ item.title }}</h2>
+              <app-input-radio v-if="item.type == 'radio'" :key="index" :answers="item.answers" @changeradio="changeradio($event)">
+              </app-input-radio>
+              <app-input-checkbox v-if="item.type == 'checkbox'" :key="index" :answers="item.answers" @changecheck="changecheck($event)">
+              </app-input-checkbox>
+              <button class="btn btn-primary" :class="[activate]">
+                Далее
+              </button>
+            </template>
+          </template>
         </form>
       </div>
       <div v-else>
         <table class="table table-bordered ">
-          <tr v-for="(item, index) in info ">
-            <td>{{ item.name }}</td>
-            <td>{{ item.value }}</td>
+          <tr v-for="(item) in info ">
+            <td>{{ item.title }}</td>
+            <td>{{ item.answer }}</td>
           </tr>
         </table>
       </div>
@@ -26,78 +30,60 @@
 </template>
 
 <script>
-import AppInput from './components/Input';
+import AppInputRadio from './components/InputRadio';
+import AppInputCheckbox from './components/InputCheckbox';
 
 export default {
   data(){
     return {
       info: [
-      {
-        name: 'Name',
-        value: '',
-        pattern: /^[a-zA-Z ]{2,30}$/
-      },
         {
-          name: 'Phone',
-          value: '',
-          pattern: /^[0-9]{7,14}$/
+          type: 'radio',
+          title: 'Какой тег задаёт ссылку?',
+          answers: [
+            'a',
+            'div',
+            'span',
+            'img'
+          ],
+          answer: ''
         },
         {
-          name: 'Email',
-          value: '',
-          pattern: /^([a-z0-9_\.-]+)@([a-z0-9_\.-]+)\.([a-z\.]{2,6})$/
-        },
-        {
-          name: 'Some Field 1',
-          value: '',
-          pattern: /.+/
-        },
-        {
-          name: 'Some Field 2',
-          value: '',
-          pattern: /.+/
+          type: 'checkbox',
+          title: 'Какие из  этих тегов строчные?',
+          answers: [
+            'a',
+            'div',
+            'span',
+            'img'
+          ],
+          answer: ''
         }
       ],
-      complete: 0,
-      formValid: false,
-      formSubmited: false
-    }
-  },
-  beforeMount() {
-    for (let i = 0; i < this.info.length; i++) {
-      this.info[i]['valid'] = false;
+      step: 0
     }
   },
   methods: {
-    changeinput(index, data) {
-      this.complete = 0;
-      this.info[index].value = data.value;
-      this.info[index].valid = data.valid;
-      for (let i = 0; i < this.info.length; i++) {
-        if (this.info[i].valid) {
-          this.complete += 20;
-        }
-      }
-      if (this.complete === 100) this.formValid = true;
+    changeradio(value) {
+      this.info[this.step]['answer'] = value;
     },
-    submited() {
-      this.formSubmited = true;
+    changecheck(value) {
+      this.info[this.step]['answer'] = value;
+    },
+    nextQuestion() {
+      this.step++;
     }
   },
   computed: {
-    width() {
-      return {
-        width: this.complete + '%'
-      };
-    },
     activate() {
       let disabled;
-      !this.formValid ? disabled = ['disabled'] : disabled = [''];
+      !this.info[this.step]['answer'] ? disabled = ['disabled'] : disabled = ['']
       return disabled;
     }
   },
   components: {
-    AppInput
+    AppInputRadio,
+    AppInputCheckbox
   }
 }
 </script>
