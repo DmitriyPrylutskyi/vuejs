@@ -15,7 +15,7 @@
   <div class="container">
     <div class="sample">
       <button class="btn btn-primary" @click="show = !show">Toggle</button>
-      <transition name="fade" appear>
+      <transition name="boom">
         <div class="alert alert-success" v-show="show">
           <div>Some text about some</div>
           <div>Some text about some</div>
@@ -39,36 +39,39 @@
     margin: 10px 0;
   }
 
-  .fade-enter {
-    opacity: 0;
+  .boom-enter {}
+
+  .boom-enter-active {
+    animation: slideIn 0.5s;
   }
 
-  .fade-enter-active {
-    transition: opacity 0.5s;
+  .boom-enter-to {}
+
+  .boom-leave {}
+
+  .boom-leave-active {
+    animation: slideOut 0.5s;
   }
 
-  .fade-enter-to {}
+  .boom-leave-to {}
 
-  .fade-leave {}
-
-  .fade-leave-active {
-    transition: opacity 0.5s;
+  @keyframes slideIn {
+    from {
+      transform: translateX(-2000px);
+    }
+    to {
+      transform: translateX(0px);
+    }
   }
 
-  .fade-leave-to {
-    opacity: 0;
+  @keyframes slideOut {
+    from {
+      transform: translateX(0px);
+    }
+    to {
+      transform: translateX(-2000px);
+    }
   }
-  /*
-  classList.add fade-enter (op: 0)
-  classList.add fade-enter-active (transition)
-  getComputedStyle[transition-duration] -> 0.5s
-    (:duration || transition-duration || animation-duration)
-  classList.remove fade-enter (op: 1)
-  classList.add fade-enter-to
-  setTimout(transition-duration)
-    classList.remove fade-enter-active
-    classList.remove fade-enter-to
-  */
   </style>
 </body>
 
