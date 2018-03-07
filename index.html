@@ -16,7 +16,7 @@
   <div class="container">
     <div class="sample">
       <button class="btn btn-primary" @click="show = !show">Toggle</button>
-      <transition mode="out-in" :css="false" @before-enter="beforeEnter" @enter="enter" @leave="leave">
+      <transition mode="out-in" enter-active-class="animated tada" leave-active-class="animated bounceOutRight" @before-enter="beforeEnter" @enter="enter" @after-enter="afterEnter" @enter-cancelled="enterCancelled" @before-leave="beforeLeave" @leave="leave" @after-leave="afterLeave" @leave-cancelled="leaveCancelled">
         <div class="alert alert-success" v-if="show" key="first">
           <p>Some text about some</p>
           <p>Some text about some</p>
@@ -39,50 +39,29 @@
       show: true
     },
     methods: {
-      beforeEnter(el) {
-        el.style.opacity = 0;
+      beforeEnter() {
+        console.log('beforeEnter');
       },
-      enter(el, done) {
-        let time = 500;
-        let fps = 50;
-        let fr = 1000 / fps;
-        let steps = time / fr;
-        let d = 1 / steps;
-        let step = 0;
-        let o = 0;
-
-        let timer = setInterval(() => {
-          step++;
-          o += d;
-          el.style.opacity = o;
-
-          if (step >= steps) {
-            clearInterval(timer);
-            el.style.opacity = 1;
-            done();
-          }
-        }, fr);
+      enter() {
+        console.log('enter');
       },
-      leave(el, done) {
-        let time = 500;
-        let fps = 50;
-        let fr = 1000 / fps;
-        let steps = time / fr;
-        let d = 1 / steps;
-        let step = 0;
-        let o = 1;
-
-        let timer = setInterval(() => {
-          step++;
-          o -= d;
-          el.style.opacity = o;
-
-          if (step >= steps) {
-            clearInterval(timer);
-            el.style.opacity = 0;
-            done();
-          }
-        }, fr);
+      afterEnter() {
+        console.log('afterEnter');
+      },
+      enterCancelled() {
+        console.log('enterCancelled');
+      },
+      beforeLeave() {
+        console.log('beforeLeave');
+      },
+      leave() {
+        console.log('leave');
+      },
+      afterLeave() {
+        console.log('afterLeave');
+      },
+      leaveCancelled() {
+        console.log('leaveCancelled');
       }
     }
   });
@@ -90,6 +69,40 @@
   <style>
   .btn {
     margin: 20px 0;
+  }
+
+  .fade-enter {}
+
+  .fade-enter-active {
+    animation: slideIn 0.5s;
+  }
+
+  .fade-enter-to {}
+
+  .fade-leave {}
+
+  .fade-leave-active {
+    animation: slideOut 0.5s forwards;
+  }
+
+  .fade-leave-to {}
+
+  @keyframes slideIn {
+    from {
+      transform: translateX(-2000px);
+    }
+    to {
+      transform: translateX(0px);
+    }
+  }
+
+  @keyframes slideOut {
+    from {
+      transform: translateX(0px);
+    }
+    to {
+      transform: translateX(-2000px);
+    }
   }
   </style>
 </body>
