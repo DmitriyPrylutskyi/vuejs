@@ -18,7 +18,7 @@
   <div class="container">
     <div class="sample">
       <button class="btn btn-primary" @click="show = !show">Toggle</button>
-      <transition name="boom">
+      <transition name="boom" mode="out-in">
         <div class="alert alert-success" v-if="show" key="success">
           <div>Some text about some</div>
           <div>Some text about some</div>
@@ -57,21 +57,17 @@
 
   .boom-enter-to {}
 
-  .boom-leave {
-    position: absolute;
-  }
+  .boom-leave {}
 
   .boom-leave-active {
     animation: slideOut 0.5s;
   }
 
-  .boom-leave-to {
-    position: absolute;
-  }
+  .boom-leave-to {}
 
   @keyframes slideIn {
     from {
-      transform: translateX(200px);
+      transform: translateX(100vw);
     }
     to {
       transform: translateX(0px);
@@ -83,9 +79,46 @@
       transform: translateX(0px);
     }
     to {
-      transform: translateX(-200px);
+      transform: translateX(-100vw);
     }
   }
+  /*
+  1 classList.add fade-leave
+  2 classList.add fade-enter
+  1 classList.add fade-leave-active
+  2 classList.add fade-enter-active
+  1 getComputedStyle[transition-duration] -> 0.5s
+  2 getComputedStyle[transition-duration] -> 0.5s
+  1 classList.remove fade-leave
+  2 classList.remove fade-enter
+  1 classList.add fade-leave-to
+  2 classList.add fade-enter-to
+  1 setTimout(transition-duration)
+      classList.remove fade-enter-active
+      classList.remove fade-enter-to
+  2 setTimout(transition-duration)
+      classList.remove fade-enter-active
+      classList.remove fade-enter-to
+
+
+  1 classList.add fade-leave
+  1 classList.add fade-leave-active
+  1 getComputedStyle[transition-duration] -> 0.5s
+  1 classList.remove fade-leave
+  1 classList.add fade-leave-to
+  1 setTimout(transition-duration)
+      classList.remove fade-enter-active
+      classList.remove fade-enter-to
+
+      2 classList.add fade-enter
+      2 classList.add fade-enter-active
+      getComputedStyle[transition-duration] -> 0.5s
+      2 classList.remove fade-enter
+      2 classList.add fade-enter-to
+      2 setTimout(transition-duration)
+        classList.remove fade-enter-active
+        classList.remove fade-enter-to
+  */
   </style>
 </body>
 
