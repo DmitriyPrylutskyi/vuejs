@@ -1,4 +1,4 @@
-# course
+# vue-l6
 
 > A Vue.js project
 
