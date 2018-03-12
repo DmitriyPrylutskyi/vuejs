@@ -5,58 +5,60 @@ Vue.use(Vuex);
 
 export const store = new Vuex.Store({
 	state: {
-		cnt: 0,
-		price: 1000,
-		orderState: null
+    info: [
+      {
+        name: 'Name',
+        value: '',
+        pattern: /^[a-zA-Z ]{2,30}$/,
+        valid: false
+      },
+      {
+        name: 'Phone',
+        value: '',
+        pattern: /^[0-9]{7,14}$/,
+        valid: false
+      },
+      {
+        name: 'Email',
+        value: '',
+        pattern: /^([a-z0-9_\.-]+)@([a-z0-9_\.-]+)\.([a-z\.]{2,6})$/
+      },
+      {
+        name: 'Some Field 1',
+        value: '',
+        pattern: /.+/,
+        valid: false
+      },
+      {
+        name: 'Some Field 2',
+        value: '',
+        pattern: /.+/,
+        valid: false
+      }
+    ],
+    complete: 0
 	},
 	getters: {
-		cnt(state){
-			return state.cnt;
+		info(state){
+			return state.info;
 		},
-		price(state){
-			return state.price;
+		complete(state){
+			return state.complete;
 		},
-		total(state){
-			return state.cnt * state.price;
-		},
-		orderState(state){
-			return state.orderState;
-		}
+    input(state) {
+      return state.info.value;
+    }
 	},
 	mutations: {
-		minus(state){
-			if(state.cnt > 0){
-				state.cnt--;
-			}
-		},
-		plus(state){
-			state.cnt++;
-		},
-		orderSend(state){
-			state.orderState = 'pending';
-		},
-		orderDone(state){
-			state.orderState = 'done';
-		},
-		setCnt(state, count){
-			//count = count.replace(/[^0-9]/g, '');
-			count = parseInt(count);
-
-			if(count < 0){
-				count = 0;
-			}
-
-			state.cnt = count;
+		setInput(state, data){
+			state.info[data.index].value = data.value;
+			state.info[data.index].valid = data.valid;
 		}
 	},
 	actions: {
-		/*
-		minus(store){
-			store.commit('minus');
-		},*/
-		sendOrder(store, payload){
+		sendInput(store, payload){
 			store.commit('orderSend');
-			
+
 			setTimeout(() => {
 				console.log(payload);
 				store.commit('orderDone');
